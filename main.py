@@ -18,8 +18,8 @@ def generate_questions():
     query = data['query']
     response = llm_chain.invoke(query)
     response_str = response.content.strip()
-    print(response_str)
-    return response_str
+    response_list = json.loads(response_str)
+    return jsonify({"questions": response_list})
 
 
     

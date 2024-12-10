@@ -20,19 +20,14 @@ Here is the user query : {query}
 Requirements:
 The user will provide a query as input.
 Based on this query, you must ask two or three follow-up questions to gather more context about the task.
-Return the response as a valid Python dictionary.
-Dictionary Structure:
-The response must strictly adhere to the following format:
 
-    "query": "<user_query>",
-    "q1": "<follow_up_question_1>",
-    "q2": "<follow_up_question_2>",
-    "q3": "<follow_up_question_3>"  # This key is optional if only two questions are asked.
-
-Notes:
-The "query" key must contain the exact user query as a string.
-The keys "q1", "q2", and "q3" should hold the follow-up questions as strings.
-Ensure the response is properly formatted and valid Python syntax so it can be directly parsed and executed in a Python backend.'''
+return the follow-up questions as a list of strings in the below format
+[
+    "Follow-up question 1",
+    "Follow-up question 2",
+    "Follow-up question 3"
+]
+'''
 )
 
 llm_chain =  template | llm
