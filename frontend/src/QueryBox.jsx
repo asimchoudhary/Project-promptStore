@@ -1,12 +1,25 @@
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
 function QueryBox() {
   const [query, setQuery] = useState("");
   const [buttonClicked, setButtonClicked] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [answers, setAnswers] = useState({});
+
   const handleChange = (e) => {
     setQuery(e.target.value);
   };
@@ -14,20 +27,52 @@ function QueryBox() {
     e.preventDefault();
     setButtonClicked(true);
     try {
-      const res = await fetch("http://localhost:5000/generate-prompt", {
+      const res = await fetch("http://localhost:5000/generate-questions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ query }),
       });
+
       const data = await res.json();
       console.log(data);
+      setQuestions(data.questions);
+      setDialogOpen(true);
     } catch (error) {
       console.error("Error:", error);
-    } finally {
-      setButtonClicked(false);
     }
+  };
+  const handleAnswerChange = (index, e) => {
+    setAnswers({ ...answers, [index]: e.target.value });
+  };
+  const handleFinalSubmit = async (e) => {
+    e.preventDefault();
+    // const res = await fetch("http://localhost:5000/generate-prompt-with-context", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ query, answers, questions }),
+    // });
+
+    // const data = await res.json();
+    // console.log(data);
+    setDialogOpen(false);
+  };
+  const handleClose = async () => {
+    setDialogOpen(false);
+    const res = await fetch(
+      "http://localhost:5000/generate-prompt-without-context",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query }),
+      }
+    );
+    const data = await res.json();
   };
 
   return (
@@ -37,7 +82,7 @@ function QueryBox() {
           Generate Prompt
         </Label>
         <Textarea
-          placeholder="Type your Query here ."
+          placeholder="i want llm to be a math teacher"
           id="message"
           value={query}
           onChange={handleChange}
@@ -52,6 +97,36 @@ function QueryBox() {
             Generate
           </Button>
         )}
+        <Dialog open={dialogOpen} onOpenChange={handleClose}>
+          <DialogTrigger asChild>
+            <Button className="hidden">Open Dialog</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>More Context for Prompt</DialogTitle>
+              <DialogDescription>
+                Please , Answer the following questions
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleFinalSubmit}>
+              {questions.map((question, index) => (
+                <div key={index}>
+                  <Label htmlFor={`answer-${index}`} className="m-3">
+                    {question}
+                  </Label>
+                  <Textarea
+                    id={`answer-${index}`}
+                    value={answers[index] || ""}
+                    onChange={(e) => handleAnswerChange(index, e)}
+                  />
+                </div>
+              ))}
+              <Button type="submit" className="mt-2 w-2/5">
+                Submit
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
