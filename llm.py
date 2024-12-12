@@ -52,3 +52,30 @@ Generate a prompt for this query that:
 ''')
 
 llm_chain_prompt_without_context = template_prompt_without_context | llm
+
+
+template_prompt_with_context = PromptTemplate(
+    input_types={"input_data":"dict"},
+    input_variables=["query", "questions", "answers"],
+    template = '''
+    You are a professional assistant skilled in creating prompts and performing prompt engineering for various use cases.  
+Your task is to craft prompts for LLMs to make them work effectively on a given task.  
+
+Here is the user query: {query}  
+
+To provide better context and improve the quality of the prompt, the following questions were asked to the user:  
+{questions}  
+
+Here are the user's responses to the questions:  
+{answers}  
+
+Generate a prompt for this query that:  
+1. Specifies the task clearly.  
+2. Provides appropriate context for the task.  
+3. Includes any necessary instructions or formatting.  
+4. Is concise and ready to use.
+
+
+'''
+)
+llm_chain_with_prompt_context = template_prompt_with_context | llm

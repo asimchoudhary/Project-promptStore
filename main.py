@@ -1,6 +1,6 @@
 from flask import Flask , request , jsonify
 from flask_cors import CORS
-from llm import llm_chain_qa , llm_chain_prompt_without_context
+from llm import llm_chain_qa , llm_chain_prompt_without_context , llm_chain_with_prompt_context
 import json
 import re
 
@@ -37,6 +37,25 @@ def generate_prompt_without_context():
     data = request.json
     query = data['query']
     response = llm_chain_prompt_without_context.invoke(query)
+    response_str = response.content.strip()
+    return jsonify({"prompt": response_str})
+
+
+@app.post("/generate-prompt-with-context")
+def generate_prompt_with_context():
+    data = request.json
+    query = data['query']
+    questions = data["questions"]
+    answers = data["answers"]
+    input_container = {
+
+    "input_data" : {
+        "query": query,
+        "questions": questions,
+        "answers": answers
+    }
+    }
+    response = llm_chain_with_prompt_context.invoke({"query":query , "questions":questions ,"answers":answers})
     response_str = response.content.strip()
     return jsonify({"prompt": response_str})
 
