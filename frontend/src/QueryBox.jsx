@@ -12,12 +12,15 @@ import {
 
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import PromptRender from "./components/PromptRender";
 
 function QueryBox() {
   const [query, setQuery] = useState("");
   const [buttonClicked, setButtonClicked] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [prompt, setPrompt] = useState("");
+  const [openPromptDialog, setOpenPromptDialog] = useState(false);
   const [answers, setAnswers] = useState({});
 
   const handleChange = (e) => {
@@ -48,17 +51,21 @@ function QueryBox() {
   };
   const handleFinalSubmit = async (e) => {
     e.preventDefault();
-    // const res = await fetch("http://localhost:5000/generate-prompt-with-context", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ query, answers, questions }),
-    // });
-
-    // const data = await res.json();
-    // console.log(data);
     setDialogOpen(false);
+    const res = await fetch(
+      "http://localhost:5000/generate-prompt-with-context",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query, answers, questions }),
+      }
+    );
+
+    const data = await res.json();
+    setPrompt(data.prompt);
+    setOpenPromptDialog(true);
   };
   const handleClose = async () => {
     setDialogOpen(false);
@@ -73,6 +80,12 @@ function QueryBox() {
       }
     );
     const data = await res.json();
+    setPrompt(data.prompt);
+    setOpenPromptDialog(true);
+  };
+  const handlePromptClose = () => {
+    setOpenPromptDialog(false);
+    setButtonClicked(false);
   };
 
   return (
@@ -127,6 +140,11 @@ function QueryBox() {
             </form>
           </DialogContent>
         </Dialog>
+        <PromptRender
+          prompt={prompt}
+          openPromptDialog={openPromptDialog}
+          handleClose={handlePromptClose}
+        />
       </div>
     </div>
   );
