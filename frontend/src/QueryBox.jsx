@@ -154,6 +154,7 @@ function QueryBox() {
           prompt={prompt}
           openPromptDialog={openPromptDialog}
           handleClose={handlePromptClose}
+          query={query}
         />
       </div>
     </div>
