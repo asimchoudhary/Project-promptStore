@@ -1,6 +1,7 @@
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -100,16 +101,25 @@ function QueryBox() {
           value={query}
           onChange={handleChange}
         />
-        {buttonClicked ? (
-          <Button disabled className="mt-2 w-1/5">
-            <Loader2 className="animate-spin" />
-            Generating
+        <div className="flex mt-2">
+          {buttonClicked ? (
+            <Button disabled className="w-1/5">
+              <Loader2 className="animate-spin" />
+              Generating
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              className="w-1/5 hover:bg-[#2c3e50]"
+              onClick={handleSubmit}
+            >
+              Generate
+            </Button>
+          )}
+          <Button className="ml-2 bg-[#9a7d0a] hover:bg-[#d4ac0d] text-white">
+            <Link to="/store">Store</Link>
           </Button>
-        ) : (
-          <Button type="submit" className="mt-2 w-1/5" onClick={handleSubmit}>
-            Generate
-          </Button>
-        )}
+        </div>
         <Dialog open={dialogOpen} onOpenChange={handleClose}>
           <DialogTrigger asChild>
             <Button className="hidden">Open Dialog</Button>
