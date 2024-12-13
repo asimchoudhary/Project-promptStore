@@ -126,7 +126,7 @@ function QueryBox() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>More Context for Prompt</DialogTitle>
+              <DialogTitle>Context for Prompt </DialogTitle>
               <DialogDescription>
                 Please , Answer the following questions
               </DialogDescription>
@@ -155,6 +155,7 @@ function QueryBox() {
           openPromptDialog={openPromptDialog}
           handleClose={handlePromptClose}
           query={query}
+          buttonType="save"
         />
       </div>
     </div>
